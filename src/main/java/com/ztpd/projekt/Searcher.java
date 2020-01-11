@@ -15,15 +15,18 @@ import org.apache.lucene.store.FSDirectory;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class Searcher {
 
-    public static void main(String args[]) throws IOException, ParseException {
+    public static ArrayList<Result> search() throws IOException, ParseException {
         IndexReader reader = getIndexReader();
         assert reader != null : "reader is null";
 
         IndexSearcher indexSearcher = new IndexSearcher(reader);
         Analyzer analyzer = new StandardAnalyzer();
+
+        ArrayList<Result> results;
 
         // TERM QUERY
         // A Query that matches documents containing a term.
@@ -36,9 +39,9 @@ public class Searcher {
             Term t1 = new Term(Constants.content, queryMammal);
             tq1 = new TermQuery(t1);
 
-            printResultsForQuery(indexSearcher, tq1);
+            results = printResultsForQuery(indexSearcher, tq1);
         }
-
+/*
         String queryBird = "bird";
         TermQuery tq2;
         {
@@ -104,28 +107,41 @@ public class Searcher {
             System.out.println("8) query parser = " + selectedQuery);
             Query q = new QueryParser(Constants.content, analyzer).parse(selectedQuery);
             printResultsForQuery(indexSearcher, q);
-        }
+        } */
 
         try {
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return results;
     }
 
-    private static void printResultsForQuery(IndexSearcher indexSearcher, Query q) throws IOException {
+    private static ArrayList<Result> printResultsForQuery(IndexSearcher indexSearcher, Query q) throws IOException {
 
         TopDocs topdocs = indexSearcher.search(q, Constants.top_docs);
+        ArrayList<Result> results = new ArrayList<>();
 
         for (ScoreDoc top : topdocs.scoreDocs) {
             Document document = indexSearcher.doc(top.doc);
-            System.out.println("SCORE: " + Float.toString(top.score));
+            Result tmp = new Result();
+            tmp.setScore(Float.toString(top.score));
+            tmp.setFilename(document.get("filename"));
+            tmp.setId(document.get("id"));
+            tmp.setFilesize(document.get("filesize"));
+            tmp.setContent(document.get("content"));
+
+            results.add(tmp);
+           /* System.out.println("SCORE: " + Float.toString(top.score));
             System.out.println("FILENAME: " + document.get("filename"));
             System.out.println("ID: " + document.get("id"));
             System.out.println("FILESIZE: " + document.get("filesize"));
             System.out.println("CONTENT: " + document.get("content"));
-            System.out.println();
+            System.out.println();*/
         }
+
+        return results;
     }
 
     private static IndexReader getIndexReader() {

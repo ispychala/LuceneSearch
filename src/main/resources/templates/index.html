@@ -4,5 +4,27 @@
     <meta charset="UTF-8">
     <title>Welcome Page</title>
 </head>
-<body>Hello World!</body>
+<body>
+
+<form class="form-inline well" action="#" th:action="@{/search}" method="post">
+    <div class="form-group">
+        <input class="btn btn-default" type="submit" value="Click!"/>
+    </div>
+</form>
+
+<div id="docList">
+    <table class="table">
+        <tbody>
+        <span th:each="r: ${results}">
+            <tr>
+                <td style="padding-left: 25px;">
+                    <h3 th:text="${r.filename} + ' (' + ${r.filesize} + ')'"/>
+                </td>
+            </tr>
+        </span>
+        </tbody>
+    </table>
+</div>
+
+</body>
 </html>
