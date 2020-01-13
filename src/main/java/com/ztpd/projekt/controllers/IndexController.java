@@ -1,6 +1,7 @@
 package com.ztpd.projekt.controllers;
 
 import com.ztpd.projekt.Result;
+import com.ztpd.projekt.SearchQuery;
 import com.ztpd.projekt.Searcher;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.springframework.stereotype.Controller;
@@ -14,21 +15,24 @@ import java.util.List;
 
 @Controller
 public class IndexController {
-    @RequestMapping("/welcome")
+
+    @RequestMapping("/")
     String index(Model model) {
         model.addAttribute("results", new ArrayList<Result>());
+        model.addAttribute("searchQuery", new SearchQuery());
         return "index";
     }
 
     @RequestMapping("/search")
-    String filter(Model model) {
+    String filter(@ModelAttribute("searchQuery") SearchQuery sq, Model model) {
         ArrayList<Result> resultList;
         try {
-            resultList = Searcher.search();
+            resultList = Searcher.search(sq.getQuery());
         } catch (Exception e) {
             resultList = new ArrayList<Result>();
         }
 
+        model.addAttribute("searchQuery", sq);
         model.addAttribute("results", resultList);
         return "index";
     }

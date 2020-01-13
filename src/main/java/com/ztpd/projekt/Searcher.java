@@ -19,7 +19,9 @@ import java.util.ArrayList;
 
 public class Searcher {
 
-    public static ArrayList<Result> search() throws IOException, ParseException {
+    public static ArrayList<Result> search(String query) throws IOException, ParseException {
+        System.out.println(query);
+
         IndexReader reader = getIndexReader();
         assert reader != null : "reader is null";
 
@@ -31,7 +33,7 @@ public class Searcher {
         // TERM QUERY
         // A Query that matches documents containing a term.
         // This may be combined with other terms with a BooleanQuery.
-        String queryMammal = "MaMMal";
+       /* String queryMammal = "MaMMal";
         TermQuery tq1;
         {
             System.out.println("1) term query: mammal (CONTENT)");
@@ -102,12 +104,12 @@ public class Searcher {
         String queryP3 = "brd~ ";
         String queryP4 = "(\"nocturnal life\"~10) OR bat";
         String queryP5 = "(\"nocturnal life\"~10) OR (\"are nocturnal\"~10)";
-        String selectedQuery = queryP5;
+        String selectedQuery = queryP5;*/
         {
-            System.out.println("8) query parser = " + selectedQuery);
-            Query q = new QueryParser(Constants.content, analyzer).parse(selectedQuery);
-            printResultsForQuery(indexSearcher, q);
-        } */
+            System.out.println("8) query parser = " + query);
+            Query q = new QueryParser(Constants.content, analyzer).parse(query);
+            results = printResultsForQuery(indexSearcher, q);
+        }
 
         try {
             reader.close();

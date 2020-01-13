@@ -1,13 +1,14 @@
 <!DOCTYPE  html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Welcome Page</title>
 </head>
 <body>
 
-<form class="form-inline well" action="#" th:action="@{/search}" method="post">
+<form class="form-inline well" action="#" th:action="@{/search}" method="post" th:object="${searchQuery}">
     <div class="form-group">
+        <input type="text" th:field="*{query}" />
         <input class="btn btn-default" type="submit" value="Click!"/>
     </div>
 </form>
