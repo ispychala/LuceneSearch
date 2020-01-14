@@ -8,4 +8,5 @@ public class Constants {
     public static final String content = "content";
     public static final String index_dir = "index";
     public static final int top_docs = 15;
+    public static final String database = "C:\\Users\\Inga\\Documents\\studia\\2stopien\\semestr2\\ZTPD\\projekt\\database\\";
 }
