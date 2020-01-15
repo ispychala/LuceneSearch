@@ -24,6 +24,7 @@
                         <a th:target="_blank" th:href="${r.URI}" th:text="${r.filename}"></a>
                     </td>
                     <td>
+                        <p th:text="${'Score: ' + r.score}">Score</p>
                         <p th:text="${'Created: ' + r.createdDate}">Created</p>
                         <p th:text="${'Last modified: ' + r.modifiedDate}">Last edited: (Modified)</p>
                         <p th:text="${'Author: ' + r.author}">Author (Creator)</p>
