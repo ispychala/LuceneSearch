@@ -17,8 +17,9 @@
     <table class="table">
         <tbody>
         <span th:each="r: ${results}">
-           <!-- <h3 th:text="${r.filename} + ' (' + ${r.filesize} + ')'"/>-->
-            <a th:target="_blank" th:href="@{/file/{filename}(filename=${r.filename})}" th:text="${r.filename}">${r.filename}</a>
+           <!-- <h3 th:text="${r.filename} + ' (' + ${r.filesize} + ')'"/>
+            <a th:target="_blank" th:href="@{/file/{filename}(filename=${r.filename})}" th:text="${r.filename}">${r.filename}</a>-->
+            <a th:target="_blank" th:href="${r.URI}" th:text="${r.filename}">${r.filename}</a>
         </span>
         </tbody>
     </table>

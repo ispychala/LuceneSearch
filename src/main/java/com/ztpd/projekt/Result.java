@@ -9,6 +9,7 @@ public class Result {
     private String id;
     private String filesize;
     private String content;
+    private String URI;
 
     public String getFilename() {
         return filename;
@@ -48,5 +49,13 @@ public class Result {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getURI() {
+        return URI;
+    }
+
+    public void setURI(String URI) {
+        this.URI = URI;
     }
 }

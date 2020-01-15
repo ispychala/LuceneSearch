@@ -133,14 +133,9 @@ public class Searcher {
             tmp.setId(document.get("id"));
             tmp.setFilesize(document.get("filesize"));
             tmp.setContent(document.get("content"));
+            tmp.setURI(Constants.URI + document.get("filename"));
 
             results.add(tmp);
-           /* System.out.println("SCORE: " + Float.toString(top.score));
-            System.out.println("FILENAME: " + document.get("filename"));
-            System.out.println("ID: " + document.get("id"));
-            System.out.println("FILESIZE: " + document.get("filesize"));
-            System.out.println("CONTENT: " + document.get("content"));
-            System.out.println();*/
         }
 
         return results;
