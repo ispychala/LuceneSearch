@@ -1,5 +1,6 @@
 package com.ztpd.projekt;
 
+import com.sun.xml.internal.ws.api.addressing.WSEndpointReference;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -12,6 +13,8 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.metadata.TikaCoreProperties;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -134,6 +137,9 @@ public class Searcher {
             tmp.setFilesize(document.get("filesize"));
             tmp.setContent(document.get("content"));
             tmp.setURI(Constants.URI + document.get("filename"));
+            tmp.setCreatedDate(document.get(Constants.created));
+            tmp.setModifiedDate(document.get(Constants.modified));
+            tmp.setAuthor(document.get(Constants.author));
 
             results.add(tmp);
         }

@@ -10,6 +10,9 @@ public class Result {
     private String filesize;
     private String content;
     private String URI;
+    private String createdDate;
+    private String modifiedDate;
+    private String author;
 
     public String getFilename() {
         return filename;
@@ -58,4 +61,29 @@ public class Result {
     public void setURI(String URI) {
         this.URI = URI;
     }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(String modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
 }

@@ -7,7 +7,10 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.tika.exception.TikaException;
+import org.apache.tika.language.detect.LanguageResult;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.metadata.TikaCoreProperties;
+import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.html.HtmlParser;
@@ -19,12 +22,32 @@ import org.xml.sax.SAXException;
 
 import java.io.*;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+class FileData {
+    public String content;
+    public String createdDate;
+    public String modifiedDate;
+    public String author;
+
+    public FileData(String cont, String cD, String mD, String auth) {
+        this.content = cont;
+        this.createdDate = cD;
+        this.modifiedDate = mD;
+        this.author = auth;
+    }
+}
+
 public class Indexer {
+
+    private static SimpleDateFormat dateFormat;
+
     public static void main(String args[]) {
+        dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         Indexer indexer = new Indexer();
         indexer.indexDocuments();
     }
@@ -72,26 +95,31 @@ public class Indexer {
 
         StoredField stored = new StoredField(Constants.id, id);
 
-        String content = getTextFromFile(file);
-        Field indexed = new TextField(Constants.content, content, Field.Store.NO);
+        FileData fd = getTextFromFile(file);
 
+        Field indexed = new TextField(Constants.content, fd.content, Field.Store.NO);
         Field storedindexed = new TextField(Constants.filename, file.getName(), Field.Store.YES);
-
         Field intfield = new IntPoint(Constants.filesize_int, (int) file.length());
-
         Field storedint = new StoredField(Constants.filesize, (int) file.length());
+
+        Field createdDate  = new TextField(Constants.created, fd.createdDate, Field.Store.YES);
+        Field modDate  = new TextField(Constants.modified, fd.modifiedDate, Field.Store.YES);
+        Field author  = new TextField(Constants.author, fd.author, Field.Store.YES);
 
         document.add(stored);
         document.add(indexed);
         document.add(storedindexed);
         document.add(intfield);
         document.add(storedint);
+        document.add(createdDate);
+        document.add(modDate);
+        document.add(author);
 
         return document;
     }
 
-    private String getTextFromFile(File file) {
-        BodyContentHandler handler = new BodyContentHandler();
+    private FileData getTextFromFile(File file) {
+        BodyContentHandler handler = new BodyContentHandler(500000);
         Metadata metadata = new Metadata();
         FileInputStream inputStream;
         try {
@@ -103,37 +131,36 @@ public class Indexer {
 
         ParseContext pContext = new ParseContext();
 
-        Parser parser = null;
-        String[] fileName = file.getName().split("\\.");
-        String fileType = fileName[fileName.length - 1];
+        AutoDetectParser parser = new AutoDetectParser();
 
-        switch (fileType) {
-            case "html":
-                parser = new HtmlParser();
-                break;
-            case "pdf":
-                parser = new PDFParser();
-                break;
-            case "txt":
-                parser = new TXTParser();
-                break;
-            case "xml":
-                parser = new XMLParser();
-                break;
-            default:
-                System.out.println("Can't parse this filetype");
-                break;
+        try {
+            parser.parse(inputStream, handler, metadata, pContext);
+        } catch (IOException | SAXException | TikaException e) {
+            e.printStackTrace();
         }
 
-        if (parser != null) {
-            try {
-                parser.parse(inputStream, handler, metadata, pContext);
-            } catch (IOException | SAXException | TikaException e) {
-                e.printStackTrace();
-            }
+        String content = handler.toString();
+
+        Date creat = metadata.getDate(TikaCoreProperties.CREATED);
+        String creatStr = "";
+
+        Date mod = metadata.getDate(TikaCoreProperties.MODIFIED);
+        String modStr = "";
+        String auth = metadata.get(TikaCoreProperties.CREATOR);
+
+        if(creat != null) {
+            creatStr = dateFormat.format(creat);
         }
 
-        return handler.toString();
+        if(mod != null) {
+            modStr = dateFormat.format(mod);
+        }
+
+        if(auth == null) {
+            auth = "";
+        }
+
+        return new FileData(content, creatStr, modStr, auth);
     }
 
 }
