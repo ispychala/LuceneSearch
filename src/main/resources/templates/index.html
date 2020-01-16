@@ -16,19 +16,33 @@
 </form>
 
 <div id="docList">
-    <table class="table">
+    <table class="table ml-5">
+        <thead>
+            <tr>
+                <td></td>
+                <td>Author</td>
+                <td>Created</td>
+                <td>Modified</td>
+                <td>Size</td>
+            </tr>
+        </thead>
         <tbody>
             <span th:each="r: ${results}">
                 <tr>
                     <td>
-                        <a th:target="_blank" th:href="${r.URI}" th:text="${r.filename}"></a>
+                        <a th:target="_blank" th:href="${r.URI}" th:text="${r.filename}" style="margin-left: 15px;">Filename</a>
                     </td>
                     <td>
-                        <p th:text="${'Score: ' + r.score}">Score</p>
-                        <p th:text="${'Created: ' + r.createdDate}">Created</p>
-                        <p th:text="${'Last modified: ' + r.modifiedDate}">Last edited: (Modified)</p>
-                        <p th:text="${'Author: ' + r.author}">Author (Creator)</p>
-                        <p th:text="${'Size of file: ' + r.filesize + 'B'}">Size: </p>
+                        <h5 th:text="${r.author}" class="text-secondary">Author (Creator)</h5>
+                    </td>
+                    <td>
+                        <h5 th:text="${r.createdDate}" class="text-secondary">Created</h5>
+                    </td>
+                    <td>
+                        <h5 th:text="${r.modifiedDate}" class="text-secondary">Last edited: (Modified)</h5>
+                    </td>
+                    <td>
+                        <h5 th:text="${r.filesize + 'B'}" class="text-secondary">Size: </h5>
                     </td>
                 </tr>
             </span>

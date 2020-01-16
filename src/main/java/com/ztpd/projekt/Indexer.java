@@ -7,16 +7,10 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.tika.exception.TikaException;
-import org.apache.tika.language.detect.LanguageResult;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.Parser;
-import org.apache.tika.parser.html.HtmlParser;
-import org.apache.tika.parser.pdf.PDFParser;
-import org.apache.tika.parser.txt.TXTParser;
-import org.apache.tika.parser.xml.XMLParser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.SAXException;
 
@@ -93,24 +87,24 @@ public class Indexer {
         File file = new File(path);
         Document document = new Document();
 
-        StoredField stored = new StoredField(Constants.id, id);
+        StoredField idx = new StoredField(Constants.id, id);
 
         FileData fd = getTextFromFile(file);
 
-        Field indexed = new TextField(Constants.content, fd.content, Field.Store.NO);
-        Field storedindexed = new TextField(Constants.filename, file.getName(), Field.Store.YES);
+        Field content = new TextField(Constants.content, fd.content, Field.Store.NO);
+        Field filename = new TextField(Constants.filename, file.getName(), Field.Store.YES);
         Field intfield = new IntPoint(Constants.filesize_int, (int) file.length());
-        Field storedint = new StoredField(Constants.filesize, (int) file.length());
+        Field size = new StoredField(Constants.filesize, (int) file.length());
 
         Field createdDate  = new TextField(Constants.created, fd.createdDate, Field.Store.YES);
         Field modDate  = new TextField(Constants.modified, fd.modifiedDate, Field.Store.YES);
         Field author  = new TextField(Constants.author, fd.author, Field.Store.YES);
 
-        document.add(stored);
-        document.add(indexed);
-        document.add(storedindexed);
+        document.add(idx);
+        document.add(content);
+        document.add(filename);
         document.add(intfield);
-        document.add(storedint);
+        document.add(size);
         document.add(createdDate);
         document.add(modDate);
         document.add(author);
@@ -130,7 +124,6 @@ public class Indexer {
         }
 
         ParseContext pContext = new ParseContext();
-
         AutoDetectParser parser = new AutoDetectParser();
 
         try {
@@ -142,20 +135,12 @@ public class Indexer {
         String content = handler.toString();
 
         Date creat = metadata.getDate(TikaCoreProperties.CREATED);
-        String creatStr = "";
+        String creatStr = creat == null ? "" : dateFormat.format(creat);
 
         Date mod = metadata.getDate(TikaCoreProperties.MODIFIED);
-        String modStr = "";
+        String modStr = mod == null ? "" : dateFormat.format(mod);
+
         String auth = metadata.get(TikaCoreProperties.CREATOR);
-
-        if(creat != null) {
-            creatStr = dateFormat.format(creat);
-        }
-
-        if(mod != null) {
-            modStr = dateFormat.format(mod);
-        }
-
         if(auth == null) {
             auth = "";
         }
